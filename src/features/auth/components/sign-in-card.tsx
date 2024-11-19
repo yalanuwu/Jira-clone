@@ -11,24 +11,23 @@ import { dottedSeparator as DottedLineSeparator } from "@/components/dotted-line
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from 'next/link';
-
-const formSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(1, 'Password required'),
-})
+import { signInSchema } from '../schema';
+import { useSignIn } from '../api/use-signIn';
 
 export const SignInCard = () => {
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const { mutate } = useSignIn();
+
+    const form = useForm<z.infer<typeof signInSchema>>({
+        resolver: zodResolver(signInSchema),
         defaultValues: {
             email: "",
             password: "",
         }
     })
 
-    const onSubmit = (values: z.infer<typeof formSchema>) => {
-        console.log({values});
+    const onSubmit = (values: z.infer<typeof signInSchema>) => {
+        mutate({json : values});
     }
 
     return (
