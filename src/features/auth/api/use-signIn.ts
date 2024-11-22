@@ -1,12 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferRequestType, InferResponseType } from "hono";
 
 import { client } from "@/lib/rpc";
+import { useRouter } from "next/navigation";
 
 type ResponseType = InferResponseType<typeof client.api.auth.signIn['$post']>
 type RequestType = InferRequestType<typeof client.api.auth.signIn['$post']>
 
 export const useSignIn = () => {
+    const router = useRouter();
+    const queryClient = useQueryClient();
 
     const mutation = useMutation<
         ResponseType,
@@ -16,6 +19,10 @@ export const useSignIn = () => {
         mutationFn:  async ({json}) => {
             const response = await client.api.auth.signIn['$post']({ json });
             return await response.json();
+        },
+        onSuccess: () => {
+            router.refresh();
+            queryClient.invalidateQueries({queryKey : ['current']});
         }
     })
 

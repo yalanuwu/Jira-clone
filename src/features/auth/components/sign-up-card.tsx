@@ -1,3 +1,5 @@
+"use client"
+
 import {FcGoogle} from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 
@@ -18,7 +20,7 @@ import { useSignUp } from '../api/use-signUp';
 
 export const SignUpCard = () => {
 
-    const { mutate } = useSignUp();
+    const { mutate, isPending } = useSignUp();
 
     const form = useForm<z.infer<typeof signUpSchema>>({
         resolver: zodResolver(signUpSchema),
@@ -92,7 +94,7 @@ export const SignUpCard = () => {
                             <FormMessage/>
                         </FormItem>
                     )}/>
-                    <Button disabled={false} size='lg' className="w-full">
+                    <Button disabled={isPending} size='lg' className="w-full">
                         Sign Up
                     </Button>    
                     </form>
@@ -103,11 +105,11 @@ export const SignUpCard = () => {
                 <DottedLineSeparator/>
             </div>
             <CardContent className="p-7 flex flex-col gap-y-4">
-                <Button variant='secondary' size={"lg"} className="w-full" disabled={false}>
+                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending}>
                     <FcGoogle className='mr-2 size-5'/>
                     Login with Goggle
                 </Button>
-                <Button variant='secondary' size={"lg"} className="w-full" disabled={false}>
+                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending}>
                     <FaGithub className='mr-2 size-5'/>
                     Login with Github
                 </Button>
