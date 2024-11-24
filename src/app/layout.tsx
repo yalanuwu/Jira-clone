@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {Inter} from 'next/font/google'
 
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { queryProvider as QueryProvider } from "@/components/query-provider";
 
@@ -25,6 +26,7 @@ export default function RootLayout({
       >
         <QueryProvider>
           {children}
+          <Toaster />
         </QueryProvider>
       </body>
     </html>
