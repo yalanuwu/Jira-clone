@@ -15,6 +15,7 @@ import { dottedSeparator as DottedSeparator } from "@/components/dotted-line-sep
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCreateWorkspace } from "../api/use-createWorkspace";
+import { useRouter } from "next/navigation";
 
 interface CreateWorkspaceFormProps {
     onCancel? : () => void;
@@ -22,6 +23,7 @@ interface CreateWorkspaceFormProps {
 
 export const CreateWorkspaceForm = ({ onCancel } : CreateWorkspaceFormProps) => {
 
+    const router = useRouter();
     const { mutate, isPending } = useCreateWorkspace();
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -38,9 +40,9 @@ export const CreateWorkspaceForm = ({ onCancel } : CreateWorkspaceFormProps) => 
             image: values.image instanceof File ? values.image : "",
         }
         mutate({ form : finalValues }, {
-            onSuccess: () => {
+            onSuccess: ({ data }) => {
                 form.reset();
-                //TODO : REDIRECT TO NEW WORKSPACE
+                router.push(`/workspaces/${data.$id}`)
             }
         });
     };
