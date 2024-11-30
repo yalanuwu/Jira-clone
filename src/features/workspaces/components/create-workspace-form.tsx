@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCreateWorkspace } from "../api/use-createWorkspace";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 interface CreateWorkspaceFormProps {
     onCancel? : () => void;
@@ -144,7 +145,8 @@ export const CreateWorkspaceForm = ({ onCancel } : CreateWorkspaceFormProps) => 
                         </div>
                         <DottedSeparator className="py-7" />
                         <div className="flex items-center justify-between">
-                            <Button type="button" size={'lg'} variant={'secondary'} onClick={onCancel} disabled={isPending}>
+                            <Button type="button" size={'lg'} variant={'secondary'} onClick={onCancel} disabled={isPending}
+                            className={cn(!onCancel && 'invisible')}>
                                 Cancel
                             </Button>
                             <Button type="submit" size={'lg'} disabled={isPending}>
