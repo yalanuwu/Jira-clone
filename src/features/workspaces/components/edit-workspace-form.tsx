@@ -25,6 +25,8 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Workspace } from "../types";
 import { useUpdateWorkspace } from "../api/use-updateWorkspace";
+import { useConfirm } from "@/hooks/use-confirm";
+import { useDeleteWorkspace } from "../api/use-deleteWorkspace";
 
 interface EditWorkspaceFormProps {
     onCancel?: () => void;
@@ -38,6 +40,13 @@ export const EditWorkspaceForm = ({
     const router = useRouter();
     const { mutate, isPending } = useUpdateWorkspace();
     const inputRef = useRef<HTMLInputElement>(null);
+    const [DeleteDialog, confirmDelete] = useConfirm(
+        "Delete Workspace",
+        "This action can't be undone",
+        "destructive"
+    );
+
+    const {mutate: deleteWorkspace, isPending: isDeletingWorkspace} = useDeleteWorkspace();
 
     const form = useForm<z.infer<typeof updateWorkspaceSchema>>({
         resolver: zodResolver(updateWorkspaceSchema),
@@ -46,6 +55,20 @@ export const EditWorkspaceForm = ({
             image: initialValues.imageUrl ?? "",
         },
     });
+
+    const handleDelete = async () => {
+        const ok = await confirmDelete();
+        if (!ok) return;
+
+        deleteWorkspace({
+            param: { workspaceId: initialValues.$id },
+        },{
+            onSuccess: () => {
+                // router.push('/');
+                window.location.href = '/';
+            }
+        });
+    }
 
     const onSubmit = (values: z.infer<typeof updateWorkspaceSchema>) => {
         const finalValues = {
@@ -71,6 +94,8 @@ export const EditWorkspaceForm = ({
     };
 
     return (
+        <div className="flex flex-col gap-y-4">
+        <DeleteDialog/>
         <Card className="w-full h-full border-none shadow-none">
             <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
                 <Button
@@ -226,5 +251,20 @@ export const EditWorkspaceForm = ({
                 </Form>
             </CardContent>
         </Card>
+        <Card className="w-full h-full border-none shadow-none">
+            <CardContent className="p-7">
+                <div className="flex flex-col">
+                    <h3 className="font-bold">Danger Zone</h3>
+                    <p className="text-sm text-muted-foreground">
+                        Deleting a workspace is irreversible and will remove all associated data.
+                    </p>
+                    <Button className="mt-6 w-fit ml-auto" variant="destructive" size="sm" type="button" disabled={isPending || isDeletingWorkspace} onClick={handleDelete}>
+                        Delete Workspace
+                    </Button>
+                </div>
+
+            </CardContent>
+        </Card>
+        </div>
     );
 };
