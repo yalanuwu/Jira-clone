@@ -9,7 +9,7 @@ import { Workspace } from "./types";
 import { createSessionClient } from "@/lib/appwrite";
 
 export const getWorkspaces = async () => {
-    try {
+    
         const { databases, account } = await createSessionClient()
         const user = await account.get();
 
@@ -36,9 +36,7 @@ export const getWorkspaces = async () => {
 
         return workspaces;
 
-    } catch {
-        return { documents : [], total : 0};
-    }
+    
 };
 
 interface getWorkspaceProps {
@@ -46,7 +44,7 @@ interface getWorkspaceProps {
 }
 
 export const getWorkspace = async ({workspaceId} : getWorkspaceProps) => {
-    try {
+
         
         const { databases, account } = await createSessionClient();
         const user = await account.get();
@@ -67,9 +65,7 @@ export const getWorkspace = async ({workspaceId} : getWorkspaceProps) => {
 
         return workspace;
 
-    } catch {
-        return null;
-    }
+
 };
 
 interface getWorkspaceInfoProps {
@@ -77,7 +73,7 @@ interface getWorkspaceInfoProps {
 }
 
 export const getWorkspaceInfo = async ({workspaceId} : getWorkspaceInfoProps) => {
-    try {
+    
         
         const { databases } = await createSessionClient();
         
@@ -91,7 +87,5 @@ export const getWorkspaceInfo = async ({workspaceId} : getWorkspaceInfoProps) =>
             name: workspace.name,
         };
 
-    } catch {
-        return null;
-    }
+    
 };

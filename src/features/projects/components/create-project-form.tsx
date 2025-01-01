@@ -15,7 +15,7 @@ import { dottedSeparator as DottedSeparator } from "@/components/dotted-line-sep
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCreateProjects } from "../api/use-createProjects";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspaceId";
 
@@ -25,7 +25,7 @@ interface CreateProjectFormProps {
 
 export const CreateProjectForm = ({ onCancel } : CreateProjectFormProps) => {
 
-    // const router = useRouter();
+    const router = useRouter();
     const { mutate, isPending } = useCreateProjects();
     const inputRef = useRef<HTMLInputElement>(null);
     const workspaceId = useWorkspaceId();
@@ -44,9 +44,9 @@ export const CreateProjectForm = ({ onCancel } : CreateProjectFormProps) => {
             image: values.image instanceof File ? values.image : "",
         }
         mutate({ form : finalValues }, {
-            onSuccess: () => {
+            onSuccess: ({ data }) => {
                 form.reset();
-                //TODO: Redirect to project screen
+                router.push(`/workspaces/${workspaceId}/projects/${data.$id}`)
             }
         });
     };
