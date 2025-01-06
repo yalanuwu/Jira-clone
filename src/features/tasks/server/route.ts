@@ -185,6 +185,140 @@ const app = new Hono()
                 documents: populatedTasks,
             }})
         }
+    )
+    .delete(
+        '/:taskId',
+        sessionMiddleware,
+        async (c) => {
+            const user = c.get("user");
+            const databases = c.get('databases');
+            const { taskId } = c.req.param();
+
+            const task = await databases.getDocument<Task>(
+                DATABASE_ID,
+                TASKS_ID,
+                taskId
+            )
+
+            const member = await getMember({
+                databases,
+                workspaceId: task.workspaceId,
+                userId: user.$id,
+            })
+
+            if (!member) {
+                return c.json({ error: 'Unauthorized'}, 401);
+            }
+
+            await databases.deleteDocument(
+                DATABASE_ID,
+                TASKS_ID,
+                taskId
+            );
+
+            return c.json({ data: { $id: task.$id }});
+        }
+    )
+    .patch(
+        '/:taskId',
+        sessionMiddleware,
+        zValidator('json', createTaskSchema.partial()),
+        async (c) => {
+            const user = c.get('user');
+            const databases = c.get('databases');
+            const { taskId } = c.req.param();
+
+            const {
+                name,
+                status,
+                projectId,
+                description,
+                dueDate,
+                assigneeId
+            } = c.req.valid('json');
+
+            const existingTask = await databases.getDocument<Task>(
+                DATABASE_ID,
+                TASKS_ID,
+                taskId,
+            )
+
+            const member = await getMember({
+                databases,
+                workspaceId : existingTask.workspaceId,
+                userId: user.$id
+            });
+
+            if (!member){
+                return c.json({ error: "Unauthorized"}, 401);
+            }
+
+            
+            const task = await databases.updateDocument<Task>(
+                DATABASE_ID,
+                TASKS_ID,
+                taskId,
+                {
+                    name,
+                    status,
+                    projectId,
+                    dueDate,
+                    assigneeId,
+                    description,
+                }
+            );
+
+            return c.json({data : task });
+        }
+    )
+    .get(
+        '/:taskId',
+        sessionMiddleware,
+        async (c) => {
+            const { taskId } = c.req.param();
+            const databases = c.get('databases');
+            const currentUser = c.get("user");
+            const { users } = await createAdminClient();
+
+            const task = await databases.getDocument<Task>(
+                DATABASE_ID,
+                TASKS_ID,
+                taskId
+            );
+
+            const currentMember = await getMember({
+                databases,
+                workspaceId: task.workspaceId,
+                userId: currentUser.$id,
+            });
+
+            const project = await databases.getDocument<Project>(
+                DATABASE_ID,
+                PROJECTS_ID,
+                task.projectId
+            )
+
+            const member = await databases.getDocument(
+                DATABASE_ID,
+                MEMBERS_ID,
+                task.assigneeId,
+            );
+
+            const user = await users.get(member.userId);
+            const assignee = {
+                ...member,
+                name: user.name,
+                email: user.email
+            };
+
+            return c.json({
+                data: {
+                    ...task,
+                    project,
+                    assignee,
+                }
+            })
+        }
     );
 
 export default app;
