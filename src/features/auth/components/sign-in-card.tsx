@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button"
 import Link from 'next/link';
 import { signInSchema } from '../schema';
 import { useSignIn } from '../api/use-signIn';
+import { signUpWithGithub, signUpWithGoogle } from '@/lib/oauth';
 
 export const SignInCard = () => {
 
@@ -80,11 +81,11 @@ export const SignInCard = () => {
                 <DottedLineSeparator/>
             </div>
             <CardContent className="p-7 flex flex-col gap-y-4">
-                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending}>
+                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending} onClick={() => signUpWithGoogle()}>
                     <FcGoogle className='mr-2 size-5'/>
                     Sign in with Goggle
                 </Button>
-                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending}>
+                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending} onClick={() => signUpWithGithub()}>
                     <FaGithub className='mr-2 size-5'/>
                     Sign in with Github
                 </Button>

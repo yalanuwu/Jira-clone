@@ -17,6 +17,7 @@ import Link from 'next/link';
 
 import { signUpSchema } from '../schema';
 import { useSignUp } from '../api/use-signUp';
+import { signUpWithGithub, signUpWithGoogle } from '@/lib/oauth';
 
 export const SignUpCard = () => {
 
@@ -105,11 +106,11 @@ export const SignUpCard = () => {
                 <DottedLineSeparator/>
             </div>
             <CardContent className="p-7 flex flex-col gap-y-4">
-                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending}>
+                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending} onClick={() => signUpWithGoogle()}>
                     <FcGoogle className='mr-2 size-5'/>
                     Login with Goggle
                 </Button>
-                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending}>
+                <Button variant='secondary' size={"lg"} className="w-full" disabled={isPending} onClick={() => signUpWithGithub()}>
                     <FaGithub className='mr-2 size-5'/>
                     Login with Github
                 </Button>
