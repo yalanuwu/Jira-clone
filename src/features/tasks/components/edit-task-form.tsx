@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 // import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspaceId";
 import { DatePicker } from "@/components/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
@@ -32,7 +31,6 @@ export const EditTaskForm = ({ onCancel, projectOptions, memberOptions, initialV
 
     // const router = useRouter();
     const { mutate, isPending } = useUpdateTask();
-    const workspaceId = useWorkspaceId();
 
     const form = useForm<z.infer<typeof createTaskSchema>>({
         resolver : zodResolver(createTaskSchema.omit({ workspaceId: true, description: true })),

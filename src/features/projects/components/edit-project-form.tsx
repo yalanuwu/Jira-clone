@@ -50,7 +50,7 @@ export const EditProjectForm = ({
     );
 
 
-    const {mutate: deleteProject } = useDeleteProject();
+    const {mutate: deleteProject, isPending: isDeletingProject } = useDeleteProject();
 
     const form = useForm<z.infer<typeof updateProjectSchema>>({
         resolver: zodResolver(updateProjectSchema),
@@ -259,7 +259,7 @@ export const EditProjectForm = ({
                         Deleting a project is irreversible and will remove all associated data.
                     </p>
                     <DottedSeparator className="py-7"/>
-                    <Button className="mt-6 w-fit ml-auto" variant="destructive" size="sm" type="button" disabled={isPending} onClick={handleDelete}>
+                    <Button className="mt-6 w-fit ml-auto" variant="destructive" size="sm" type="button" disabled={isPending || isDeletingProject} onClick={handleDelete}>
                         Delete Project
                     </Button>
                 </div>

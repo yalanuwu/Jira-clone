@@ -277,7 +277,6 @@ const app = new Hono()
         async (c) => {
             const { taskId } = c.req.param();
             const databases = c.get('databases');
-            const currentUser = c.get("user");
             const { users } = await createAdminClient();
 
             const task = await databases.getDocument<Task>(
@@ -286,11 +285,6 @@ const app = new Hono()
                 taskId
             );
 
-            const currentMember = await getMember({
-                databases,
-                workspaceId: task.workspaceId,
-                userId: currentUser.$id,
-            });
 
             const project = await databases.getDocument<Project>(
                 DATABASE_ID,
@@ -354,7 +348,7 @@ const app = new Hono()
 
             const workspaceId = workspaceIds.values().next().value;
 
-            if (!workspaceId) return c.json({ error: 'Unauthorized'});
+            if (!workspaceId) return c.json({ error: 'Workspace ID is required'}, 400);
 
             const member = await getMember({
                 databases,
